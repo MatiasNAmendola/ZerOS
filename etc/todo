@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+require "hpricot"
+require "getopt/long"
+
+def LoadConf(file)
+	f = File.read(file)
+
+	doc = Hpricot(f)
+	conf = {}
+	(doc/:syntax).each do |elem|
+		(elem/:language).last.attributes["extentions"].split(",").each do |x|
+			conf[x] = Regexp.new((elem/:regex).last.innerText)
+		end
+	end
+	return conf
+end
+
+include Getopt
+opt = Long.getopts(
+	["--mode", "-m", REQUIRED],
+	["--dir", "-d", REQUIRED]
+)
+
+if opt["m"]
+	case opt["m"]
+	when /file/i
+		mode = 0
+	when /checklist/i
+		mode = 1
+	else
+		puts "Unknown mode: `#{opt["m"]}'"
+		exit
+	end
+end
+
+if opt["d"]
+	begin
+		Dir.chdir(opt["d"]) 
+	rescue
+		puts "Cannot change directories to: `#{File.expand_path(opt["d"])}'"
+	end
+end
+
+def file_mode
+	Dir.entries(?.).each do |x|
+		next unless File.file? x
+		txt = File.read x
+		next if COMMENT_STRINGS[File.extname(x)[1..-1]] == nil
+		mtc = txt.scan COMMENT_STRINGS[File.extname(x)[1..-1]]
+		mtc.each do |y|
+			puts	"*  " + x + ":\t" + y.first
+		end
+	end
+end
+def checklist()
+	unless Dir.entries(?.).grep(/^.*\.2do$/)
+		puts "No todo file found in the directory"
+		exit
+	end
+	todos = Dir.entries(?.).grep(/^.*\.2do$/)
+	todos.each do |todo|
+		text = File.read(todo)
+		text.lines.each do |line|
+			x = line.match(/^[\t\s]*\"((?:[^\"\\]|\\.)*)\"[\t\s]*\[(.+)\]/)
+			print "\033[1m*\033[0m  " + x[1]
+			print " " * ((60 - x[1].length).abs() + 1)
+			case x[2]
+			when "X"
+				print "[\033[1;32m Done        \033[0m]\n"
+			when " "
+				print "[\033[1;31m Incomplete  \033[0m]\n"
+			when "-"
+				print "[\033[1;33m In Progress \033[0m]\n"
+			when "|"
+				print "[\033[1;35m Optional    \033[0m]\n"
+			else
+				print "[\033[1;31m Unsure      \033[0m]\n"
+			end
+		end
+	end
+end
+COMMENT_STRINGS = LoadConf(File.expand_path(File.dirname __FILE__) + "/ToDo.xml")
+
+unless mode == 1
+	file_mode()
+	exit
+end
+
+checklist

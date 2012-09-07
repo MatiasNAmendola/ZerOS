@@ -1,0 +1,6 @@
+<ToDo>
+	<syntax>
+		<language extentions="s,S">C/C++/C Preprocessed GNU Assembley</language>
+		<regex>/\*[\s\t\n\r]*(?:TODO|todo)[\s\t]*:[\s\t\n\r]*(.+?)[\s\t\n\r]*\*/</regex>
+	</syntax>
+</ToDo>

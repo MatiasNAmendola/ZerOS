@@ -1,13 +1,14 @@
+#ifdef TEST
+.globl memmove_
+memmove_:
+#else
 .globl memmove
-#ifdef __x86_64__
 memmove:
-	cmp	$0, %cx
+#endif
+#ifdef __x86_64__
+	pushq	%rax
+	test	%cx, %cx
 	je	3f
-	pushq	%rbp
-	movq	%rsp, %rbp
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rdx
 	movq	%rdx, %rcx
 	
 	cmpq	%rdi, %rsi
@@ -81,9 +82,6 @@ memmove:
 	cld
 2:
 	popq	%rax
-	popq	%rdi
-	popq	%rsi
-	popq	%rbp
 3:
 	ret
 #endif

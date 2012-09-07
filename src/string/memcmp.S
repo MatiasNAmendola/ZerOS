@@ -1,19 +1,19 @@
+#ifdef TEST
+.globl memcmp_
+memcmp_:
+#else
 .globl memcmp
-#ifdef __x86_64__
 memcmp:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rdx
+#endif
+#ifdef __x86_64__
 	movq	%rdx, %rcx
 1:
 	movb	(%rsi), %al
 	movb	(%rdi), %bl
-	cmp	%al, %bl
-	cmp	$0, %rcx
+	test	%rcx, %rcx
 	je	1f
 	dec	%rcx
+	cmp	%al, %bl
 	je	1b
 	jb	2f
 	ja	3f
@@ -24,9 +24,8 @@ memcmp:
 	movq	$1, %rax
 	jmp	4f
 1:
-	movq	$0, %rax
+	xor	%rax, %rax
 4:
-	popq	%rdx
 	ret	
 
 #endif

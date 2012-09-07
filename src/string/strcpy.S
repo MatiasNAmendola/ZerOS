@@ -1,11 +1,13 @@
+#ifdef TEST
+.globl strcpy_
+strcpy_:
+#else
 .globl strcpy
-#ifdef __x86_64__
 strcpy:
-	push	%rbp
-	movq	%rsp, %rbp	
+#endif
+#ifdef __x86_64__
 	push	%rsi
-	push	%rdi
-	push	%rcx	
+	push	%rdi	
 	mov	$0, %cx
 	cld
 	
@@ -20,7 +22,5 @@ strcpy:
 	popq	%rsi
 	popq	%rdi
 	movq	%rdi, %rax
-	popq	%rcx
-	popq	%rbp
-	ret	$8
+	ret
 #endif

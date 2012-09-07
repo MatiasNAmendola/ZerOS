@@ -1,39 +1,37 @@
-
-.globl strlen
-#ifdef __x86_64__
+#ifdef TEST
+.globl	strlen_
+strlen_:
+#else
+.globl	strlen
 strlen:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	pushq	%rsi
-	pushq	%rdi
-	movb	$0, %al
-	movq	%rdi, %rsi
-	cld
-repne	scasb
-	movq	%rdi, %rax
-	sub	%rsi, %rax
-	dec	%rax	
-	popq	%rdi
-	popq	%rsi
-	popq	%rbp
-	ret
 #endif
+#ifdef __x86_64__
+	pushq	%rdi
+	xor	%al, %al
+	xor	%rcx, %rcx
+	cld
+	not	%rcx
+	repne	scasb
+	not	%rcx
+	mov	%rcx, %rax
+	dec	%rax
+	popq	%rdi
+	ret
+#else
 #ifdef __i386__
-strlen:
 	pushl	%ebp
 	movl	%esp, %ebp
-
 	pushl	%esi
-	pushl	%ecx
-
-	movb	$0, %al
-	movq	%edi, %esi
-	cld
-repne	scasb
+	pushl	%rsi
+	xorb	%al
+	movl	%edi, %esi
+	repne	scasb
 	movl	%edi, %eax
-	sub	%esi, %eax
+	subl	%esi, %eax
+	decl	%eax
 	popl	%edi
 	popl	%esi
 	popl	%ebp
 	ret
+#endif
 #endif

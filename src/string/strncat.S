@@ -1,17 +1,18 @@
+#ifdef TEST
+.globl strncat_
+strncat_:
+#else
 .globl strncat
-
-#ifdef __x86_64__
 strncat:
-	pushq	%rbp
-	movq	%rsp, %rbp
+#endif
+#ifdef __x86_64__
 	pushq	%rsi
-	pushq	%rdi
-	pushq	%rdx
+	push	%rdi
 	movq	%rdx, %rcx
 	cmp	$0, %rcx
 	je	2f
-	movb	$0, %al
-repne	scasb
+	xor	%al, %al
+	repne	scasb
 	movq	$1, %rcx
 	dec	%rdi
 	dec	%rdx
@@ -26,11 +27,9 @@ repne	scasb
 	jmp	1b
 2:
 	movb	$0, (%rdi)
-	popq	%rdx
 	popq	%rdi
-	movq	%rdi, %rax
 	popq	%rsi
-	popq	%rbp
+	movq	%rdi, %rax
 	ret
 #endif
 

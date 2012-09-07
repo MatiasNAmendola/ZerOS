@@ -1,24 +1,18 @@
+#ifdef TEST
+.globl memcpy_
+memcpy_:
+#else
 .globl memcpy
-#ifdef __x86_64__
 memcpy:
-	pushq	%rbp
-	movq	%rsp, %rbp
+#endif
+#ifdef __x86_64__
 	pushq	%rdi
 	pushq	%rsi
-	pushq	%rdx
-	mov	$0, %cx
+	movq	%rdx, %rcx
 	cld
-1:
-	movsb
-	dec	%rdx
-	cmp	$0, %rdx
-	je	1f
-	jmp	1b
-1:
-	popq	%rdi
+	rep movsb
 	popq	%rsi
 	popq	%rdi
 	movq	%rdi, %rax
-	popq	%rbp
 	ret
 #endif

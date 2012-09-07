@@ -1,40 +1,24 @@
-ENTRY (loader)
-
+ENTRY(loader)
+phys = 0x00100000;
 SECTIONS
 {
-    . = 0x00100000;
-
-    .text ALIGN (0x1000) :
-    {
-        *(.text)
-        *(.gnu.linkonce.t*)
-    }
-
-    .rodata ALIGN (0x1000) :
-    {
-
-        *(.rodata*)
-        *(.gnu.linkonce.r*)
-    }
-
-    .data ALIGN (0x1000) :
-    {
-        *(.data)
-        *(.gnu.linkonce.d*)    
-    }
-
-    .bss :
-    {
-        sbss = .;
-        *(COMMON)
-        *(.bss)
-        *(.gnu.linkonce.b*)
-        ebss = .;
-    }
-
-    /DISCARD/ :
-    {
-        *(.comment)
-        *(.eh_frame) /* discard this, unless you are implementing runtime support for C++ exceptions. */
-    }
+  .text phys : AT(phys) {
+    code = .;
+    *(.text)
+    *(.rodata)
+    . = ALIGN(4096);
+  }
+  .data : AT(phys + (data - code))
+  {
+    data = .;
+    *(.data)
+    . = ALIGN(4096);
+  }
+  .bss : AT(phys + (bss - code))
+  {
+    bss = .;
+    *(.bss)
+    . = ALIGN(4096);
+  }
+  end = .;
 }

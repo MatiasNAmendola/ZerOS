@@ -1,5 +1,11 @@
-#ifdef __x86_64__
+#ifdef TEST
+.globl strncpy_
+strncpy_:
+#else
+.globl strncpy
 strncpy:
+#endif
+#ifdef __x86_64__
 	pushq	%rbp
 	movq	%rsp, %rbp
 	pushq	%rdi

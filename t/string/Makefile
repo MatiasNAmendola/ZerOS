@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-Wall -c -O3 -I../include/ -ggdb
-SOURCES=strcmp.S strncmp.S strlen.S strcpy.S strncpy.S memcpy.S memmove.S memcmp.S strcat.S strncat.S strchr.S
-all: ${SOURCES} bootstrap link clean
+CFLAGS=-Wall -c -ggdb -O3 -I../include/ -DTEST
+SOURCES= strspn.S strcmp.S strncmp.S strlen.S strcpy.S strncpy.S memset.S memchr.S memcpy.S memmove.S memcmp.S strcat.S strncat.S strchr.S strcspn.S strrchr.S strpbrk.S
+all: ${SOURCES} bootstrap link
 	
 %.S:
 	@echo "Compiling			\033[1m[ $* ]\033[0m"
@@ -13,7 +13,7 @@ bootstrap:
 
 link:
 	@echo "Linking..."
-	@${CC} -otest *.o
+	@${CC} -pg -otest *.o
 
 clean:
 	@rm *.o

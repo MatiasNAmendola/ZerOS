@@ -1,6 +1,11 @@
+#ifdef TEST
+.globl strcat_
+strcat_:
+#else
 .globl strcat
-#ifdef __x86_64__
 strcat:
+#endif
+#ifdef __x86_64__
 	pushq	%rbp
 	movq	%rsp, %rbp
 	pushq	%rdi
