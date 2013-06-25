@@ -22,7 +22,6 @@ strlen:
 	pushl	%ebp
 	movl	%esp, %ebp
 	pushl	%esi
-	pushl	%rsi
 	xorb	%al
 	movl	%edi, %esi
 	repne	scasb
